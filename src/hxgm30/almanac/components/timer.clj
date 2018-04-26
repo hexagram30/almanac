@@ -7,17 +7,22 @@
     [hxgm30.almanac.const :as const]
     [hxgm30.almanac.event.tag :as tag]
     [hxgm30.event.components.pubsub :as pubsub]
+    [hxgm30.event.message :as message]
     [taoensso.timbre :as log]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;   Utility Functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Globals & Utility Functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(def ^:dynamic *day-period-counter* (atom 0))
+(def ^:dynamic *season-counter* (atom 0))
+
 (defn create-timer
-  [system period event-type]
+  [component period event-type side-effect-fn msg-fn]
   (async/go-loop []
     (do
-      (pubsub/publish system :world event-type {})
+      (side-effect-fn component)
+      (pubsub/publish component :world event-type (msg-fn component))
       (async/<! (async/timeout (* 1000 period)))
       (recur))))
 
@@ -25,47 +30,71 @@
 ;;;   Timer Component API   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn get-day-inc
-  [system]
-  )
-
-(defn get-day-division-index
-  [system]
-  ; (mod (get-day-inc system) (config/day-divisions system))
-  )
+(defn inc-day-period
+  [_component]
+  (swap! *day-period-counter* inc))
 
 (defn get-day-period
-  [system]
+  [_component]
+  @*day-period-counter*)
+
+(defn get-day-division-index
+  [component]
+  (mod (get-day-period component)
+       (config/day-divisions component)))
+
+(defn get-day-period
+  [component]
   (/ const/day-seconds
-     (config/day-divisions system)
-     (config/time-multiplier system)))
+     (config/day-divisions component)
+     (config/time-multiplier component)))
+
+(defn get-day-transition-msg
+  [component]
+  (config/day-transition
+   component
+   (get-day-division-index component)))
 
 (defn create-day-timer
-  [system]
-  (create-timer system
-                (get-day-period system)
-                tag/day-transition))
+  [component]
+  (create-timer component
+                (get-day-period component)
+                tag/day-transition
+                inc-day-period
+                get-day-transition-msg))
 
-(defn get-day-inc
-  [system]
-  )
-
-(defn get-year-division-index
-  [system]
-  ; (mod (get-year-inc system) (config/year-divisions system))
-  )
+(defn inc-year-period
+  [_component]
+  (swap! *season-counter* inc))
 
 (defn get-year-period
-  [system]
+  [_component]
+  @*season-counter*)
+
+(defn get-year-division-index
+  [component]
+  (mod (get-year-period component)
+       (config/year-divisions component)))
+
+(defn get-year-period
+  [component]
   (/ const/year-seconds
-     (config/year-divisions system)
-     (config/time-multiplier system)))
+     (config/year-divisions component)
+     (config/time-multiplier component)))
+
+(defn get-year-transition-msg
+  [component]
+  (config/year-transition
+   component
+   (get-year-division-index component)))
 
 (defn create-year-timer
-  [system]
-  (create-timer system
-                (get-year-period system)
-                tag/year-transition))
+  [component]
+  (create-timer component
+                (get-year-period component)
+                tag/year-transition
+                inc-year-period
+                get-year-transition-msg))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Component Lifecycle Implementation   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -102,4 +131,6 @@
 (defn create-component
   ""
   []
-  (map->Timer {}))
+  (map->Timer
+    {:day-period-counter (atom 0)
+     :season-counter (atom 0)}))
