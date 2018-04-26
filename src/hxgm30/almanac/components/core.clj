@@ -3,6 +3,9 @@
     [com.stuartsierra.component :as component]
     [hxgm30.almanac.components.config :as config]
     [hxgm30.almanac.components.logging :as logging]
+    [hxgm30.almanac.components.timer :as timer]
+    [hxgm30.almanac.event.tag :as tag]
+    [hxgm30.event.components.pubsub :as pubsub]
     [taoensso.timbre :as log]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -18,10 +21,26 @@
              (logging/create-component)
              [:config])})
 
+(def pbsb
+  {:pubsub (component/using
+            (pubsub/create-component tag/subscribers)
+            [:config :logging])})
+
+(def tmr
+  {:timer (component/using
+             (timer/create-component)
+             [:config :logging :pubsub])})
+
 (defn basic
   [cfg-data]
   (merge (cfg cfg-data)
          log))
+
+(defn main
+  [cfg-data]
+  (merge (basic cfg-data)
+         pbsb
+         tmr))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Component Initializations   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,15 +55,15 @@
 (defn initialize
   []
   (-> (config/build-config)
-      basic
+      main
       component/map->SystemMap))
 
 (def init-lookup
   {:basic #'initialize-bare-bones
-   :xxx #'initialize})
+   :main #'initialize})
 
 (defn init
   ([]
-    (init :basic))
+    (init :main))
   ([mode]
     ((mode init-lookup))))

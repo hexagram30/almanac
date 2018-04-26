@@ -24,6 +24,7 @@
   :dependencies [
     [clojusc/twig "0.3.2"]
     [hexagram30/common "0.1.0-SNAPSHOT"]
+    [hexagram30/event "0.1.0-SNAPSHOT"]
     [org.clojure/clojure "1.8.0"]
     [org.clojure/core.async "0.4.474"]]
   :profiles {
