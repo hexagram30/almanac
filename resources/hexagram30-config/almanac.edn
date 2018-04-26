@@ -5,11 +5,21 @@
      :day {
        :divisions 4
        :states [:morning :afternoon :evening :night]
-       :transitions [:dawn :noon :sunset :dusk]}
+       :transitions [:dawn :noon :sunset :dusk]
+       :messages [
+         "Dawn has broken; it is now morning."
+         "The sun has passed it's zenith and it is now afternoon."
+         "The sun has set and evening begins."
+         "Dusk has passed and night has enveloped the world."]}
      :year {
        :divisions 4
        :states [:spring :summer :autumn :winter]
-       :transitions [:equinox :solstice :equinox :solstic]}}}
+       :transitions [:equinox :solstice :equinox :solstice]
+       :messages [
+         "The vernal equinox has arrived: Spring is here."
+         "The summer solstice has passed and the high days of Summer have arrived."
+         "With the passing of the autumnal equinox and the colours of Fall, the days grow cooler."
+         "The winter solstice has passed, as have the longest, coldest days of the year."]}}}
  :logging {
    :level :debug
    :nss [io.netty hxgm30]}}

@@ -24,6 +24,10 @@
   [system]
   (get-in (get-cfg system) [:almanac :event :day :divisions]))
 
+(defn day-messages
+  [system]
+  (get-in (get-cfg system) [:almanac :event :day :messages]))
+
 (defn day-states
   [system]
   (get-in (get-cfg system) [:almanac :event :day :states]))
@@ -32,9 +36,19 @@
   [system]
   (get-in (get-cfg system) [:almanac :event :day :transitions]))
 
+(defn day-transition
+  [system idx]
+  {:state (nth (day-states system) idx)
+   :transition (nth (day-transitions system) idx)
+   :message (nth (day-messages system) idx)})
+
 (defn year-divisions
   [system]
   (get-in (get-cfg system) [:almanac :event :year :divisions]))
+
+(defn year-messages
+  [system]
+  (get-in (get-cfg system) [:almanac :event :year :messages]))
 
 (defn year-states
   [system]
@@ -43,6 +57,12 @@
 (defn year-transitions
   [system]
   (get-in (get-cfg system) [:almanac :event :year :transitions]))
+
+(defn year-transition
+  [system idx]
+  {:state (nth (year-states system) idx)
+   :transition (nth (year-transitions system) idx)
+   :message (nth (year-messages system) idx)})
 
 (defn time-multiplier
   [system]
