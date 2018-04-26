@@ -20,6 +20,34 @@
 ;;;   Config Component API   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn day-divisions
+  [system]
+  (get-in (get-cfg system) [:almanac :event :day :divisions]))
+
+(defn day-states
+  [system]
+  (get-in (get-cfg system) [:almanac :event :day :states]))
+
+(defn day-transitions
+  [system]
+  (get-in (get-cfg system) [:almanac :event :day :transitions]))
+
+(defn year-divisions
+  [system]
+  (get-in (get-cfg system) [:almanac :event :year :divisions]))
+
+(defn year-states
+  [system]
+  (get-in (get-cfg system) [:almanac :event :year :states]))
+
+(defn year-transitions
+  [system]
+  (get-in (get-cfg system) [:almanac :event :year :transitions]))
+
+(defn time-multiplier
+  [system]
+  (get-in (get-cfg system) [:almanac :time :multiplier]))
+
 (defn log-level
   [system]
   (get-in (get-cfg system) [:logging :level]))

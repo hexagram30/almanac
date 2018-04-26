@@ -1,3 +1,15 @@
-{:logging {
+{:almanac {
+   :time {
+     :multiplier 60}
+   :event {
+     :day {
+       :divisions 4
+       :states [:morning :afternoon :evening :night]
+       :transitions [:dawn :noon :sunset :dusk]}
+     :year {
+       :divisions 4
+       :states [:spring :summer :autumn :winter]
+       :transitions [:equinox :solstice :equinox :solstic]}}}
+ :logging {
    :level :debug
    :nss [io.netty hxgm30]}}
