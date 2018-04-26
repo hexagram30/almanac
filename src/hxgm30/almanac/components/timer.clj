@@ -13,12 +13,6 @@
 ;;;   Utility Functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn get-day-period
-  [system]
-  (/ const/day-seconds
-     (config/day-divisions system)
-     (config/time-multiplier system)))
-
 (defn create-timer
   [system period event-type]
   (async/go-loop []
@@ -27,17 +21,51 @@
       (async/<! (async/timeout (* 1000 period)))
       (recur))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Timer Component API   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn get-day-inc
+  [system]
+  )
+
+(defn get-day-division-index
+  [system]
+  ; (mod (get-day-inc system) (config/day-divisions system))
+  )
+
+(defn get-day-period
+  [system]
+  (/ const/day-seconds
+     (config/day-divisions system)
+     (config/time-multiplier system)))
+
 (defn create-day-timer
   [system]
   (create-timer system
                 (get-day-period system)
                 tag/day-transition))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;   Timer Component API   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn get-day-inc
+  [system]
+  )
 
-;; TBD
+(defn get-year-division-index
+  [system]
+  ; (mod (get-year-inc system) (config/year-divisions system))
+  )
+
+(defn get-year-period
+  [system]
+  (/ const/year-seconds
+     (config/year-divisions system)
+     (config/time-multiplier system)))
+
+(defn create-year-timer
+  [system]
+  (create-timer system
+                (get-year-period system)
+                tag/year-transition))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Component Lifecycle Implementation   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -49,13 +77,15 @@
   [this]
   (log/info "Starting timer component ...")
   (log/debug "Started timer component.")
-  (assoc this :day (create-day-timer this)))
+  (assoc this :day (create-day-timer this)
+              :year (create-year-timer this)))
 
 (defn stop
   [this]
   (log/info "Stopping timer component ...")
   (log/debug "Stopped timer component.")
-  (assoc this :day nil))
+  (assoc this :day nil
+              :year nil))
 
 (def lifecycle-behaviour
   {:start start
