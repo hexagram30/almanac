@@ -1,6 +1,6 @@
 {:almanac {
    :time {
-     :multiplier 60}
+     :multiplier 512}
    :event {
      :day {
        :divisions 4
