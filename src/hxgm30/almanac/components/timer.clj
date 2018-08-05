@@ -30,17 +30,19 @@
 ;;;   Timer Component API   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Day
+
 (defn inc-day-period
   [_component]
   (swap! *day-period-counter* inc))
 
-(defn get-day-period
+(defn get-day-period-counter
   [_component]
   @*day-period-counter*)
 
 (defn get-day-division-index
   [component]
-  (mod (get-day-period component)
+  (mod (get-day-period-counter component)
        (config/day-divisions component)))
 
 (defn get-day-period
@@ -63,17 +65,19 @@
                 inc-day-period
                 get-day-transition-msg))
 
+;; Year
+
 (defn inc-year-period
   [_component]
   (swap! *season-counter* inc))
 
-(defn get-year-period
+(defn get-year-period-counter
   [_component]
   @*season-counter*)
 
 (defn get-year-division-index
   [component]
-  (mod (get-year-period component)
+  (mod (get-year-period-counter component)
        (config/year-divisions component)))
 
 (defn get-year-period
