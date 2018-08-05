@@ -22,6 +22,7 @@
     :name "Apache License, Version 2.0"
     :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [
+    [clojusc/system-manager "0.3.0-SNAPSHOT"]
     [clojusc/twig "0.3.2"]
     [hexagram30/common "0.1.0-SNAPSHOT"]
     [hexagram30/event "0.1.0-SNAPSHOT"]
@@ -32,7 +33,6 @@
       :aot :all}
     :dev {
       :dependencies [
-        [clojusc/dev-system "0.1.0"]
         [clojusc/trifl "0.2.0"]
         [org.clojure/tools.namespace "0.2.11"]]
       :plugins [
@@ -40,7 +40,7 @@
         [venantius/ultra "0.5.2"]]
       :source-paths ["dev-resources/src"]
       :repl-options {
-        :init-ns hxgm30.almanac.dev
+        :init-ns hxgm30.almanac.repl
         :prompt ~get-prompt
         :init ~(println (get-banner))}}
     :lint {
@@ -53,7 +53,8 @@
         [lein-kibit "0.1.6"]
         [venantius/yagni "0.1.4"]]}
     :test {
-      :plugins [[lein-ltest "0.3.0"]]}}
+      :plugins [
+        [lein-ltest "0.3.0"]]}}
   :aliases {
     ;; Dev Aliases
     "repl" ["do"
@@ -73,6 +74,5 @@
     "eastwood" ["with-profile" "+lint" "eastwood" "{:namespaces [:source-paths]}"]
     "lint" ["do"
       ["kibit"]
-      ;["eastwood"]
-      ]
+      ["eastwood"]]
     "ltest" ["with-profile" "+test" "ltest"]})
